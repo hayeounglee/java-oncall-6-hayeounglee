@@ -21,33 +21,25 @@ public class OncallController {
 
     public void run() {
         Calender calender = askMonthAndWeek();
-        List<DayOncall> monthOneCall = new ArrayList<>();
-
+        DayOneCalls dayOneCalls = new DayOneCalls();
         List<Oncall> oncalls = askOnCall();
+
+        makeOneCalls(calender, dayOneCalls, oncalls);
+
+        outputView.printDayShift(dayOneCalls);
+    }
+
+    private void makeOneCalls(Calender calender, DayOneCalls dayOneCalls, List<Oncall> oncalls) {
         Oncall weekdays = oncalls.get(0);
         Oncall weekend = oncalls.get(1);
 
         for (Day day : calender.getCalender()) {
             if (Weeks.isWeekend(day) || Holidays.isHoliday(day)) {
-                monthOneCall.add(new DayOncall(day.month(), day.day(), day.week(), Holidays.isHoliday(day), getOncall(monthOneCall, weekend)));
+                dayOneCalls.calculate(day, weekend);
                 continue;
             }
-            monthOneCall.add(new DayOncall(day.month(), day.day(), day.week(), Holidays.isHoliday(day), getOncall(monthOneCall, weekdays)));
+            dayOneCalls.calculate(day, weekdays);
         }
-        outputView.printDayShift(calender, monthOneCall);
-    }
-
-    private String getOncall(List<DayOncall> monthOneCal, Oncall oncall) {
-        String name = oncall.getName();
-
-        if (monthOneCal.size() == 0) {
-            return name;
-        }
-
-        if (monthOneCal.get(monthOneCal.size() - 1).name().equals(name)) {
-            return oncall.changeOrder(name);
-        }
-        return name;
     }
 
     private Calender askMonthAndWeek() {
