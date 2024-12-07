@@ -10,7 +10,7 @@ import java.util.stream.IntStream;
 
 public class Calender {
     private final int month;
-    private List<Today> calender;
+    private List<Day> calender;
     List<String> weeks = new ArrayList<>(List.of("월", "화", "수", "목", "금", "토", "일"));
 
     public Calender(String monthAndWeek) {
@@ -25,12 +25,12 @@ public class Calender {
                 .collect(Collectors.toList());
 
         for (Integer day : todayDay) {
-            calender.add(new Today(month, day, weeks.get(weekIndex % 7)));
+            calender.add(new Day(month, day, weeks.get(weekIndex % 7)));
             weekIndex++;
         }
     }
 
-    public List<Today> getCalender() {
+    public List<Day> getCalender() {
         return calender;
     }
 
