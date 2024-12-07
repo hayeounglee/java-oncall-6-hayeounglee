@@ -1,6 +1,7 @@
 package oncall.model;
 
 import oncall.util.Parser;
+import oncall.validator.MemberValidator;
 
 import java.util.List;
 
@@ -10,7 +11,13 @@ public class Weekend implements Oncall {
 
     public Weekend(String member) {
         weekendOncall = Parser.parseDelimiter(member, ",");
+        validate();
         index = 0;
+    }
+
+    private void validate() {
+        MemberValidator memberValidator = new MemberValidator();
+        memberValidator.validate(weekendOncall);
     }
 
     public String getName() {

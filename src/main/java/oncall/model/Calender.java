@@ -1,40 +1,49 @@
 package oncall.model;
 
 import oncall.constant.DaysPerMonth;
+import oncall.constant.Weeks;
 import oncall.util.Parser;
+import oncall.validator.FormValidator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Calender {
-    private final int month;
-    private List<Day> calender;
-    List<String> weeks = new ArrayList<>(List.of("월", "화", "수", "목", "금", "토", "일"));
+    private final List<Day> calender;
 
     public Calender(String monthAndWeek) {
-        month = Parser.parseToInt(Parser.parseDelimiter(monthAndWeek, ",").get(0));// 일 수 가져오기
-        String startWeek = Parser.parseDelimiter(monthAndWeek, ",").get(1);
+        validate(monthAndWeek);
         calender = new ArrayList<>();
+        makeCalender(monthAndWeek);
+    }
 
-        int weekIndex = weeks.indexOf(startWeek);
-        int maxDay = DaysPerMonth.getMatchingDay(month);
-        List<Integer> todayDay = IntStream.range(1, maxDay + 1)
-                .boxed()
-                .collect(Collectors.toList());
+    private void validate(String input) {
+        FormValidator formValidator = new FormValidator();
+        formValidator.validateForm(input);
+    }
 
-        for (Integer day : todayDay) {
-            calender.add(new Day(month, day, weeks.get(weekIndex % 7)));
+    private void makeCalender(String monthAndWeek) {
+        int month = Parser.parseToInt(Parser.parseDelimiter(monthAndWeek, ",").get(0));
+        String startWeek = Parser.parseDelimiter(monthAndWeek, ",").get(1);
+
+        int weekIndex = Weeks.getIndex(startWeek);
+        List<Integer> days = makeDays(month);
+
+        for (Integer day : days) {
+            calender.add(new Day(month, day, Weeks.getWeek(weekIndex % 7)));
             weekIndex++;
         }
     }
 
-    public List<Day> getCalender() {
-        return calender;
+    private List<Integer> makeDays(int month) {
+        int maxDay = DaysPerMonth.getMatchingDay(month);
+        return IntStream.range(1, maxDay + 1)
+                .boxed()
+                .toList();
     }
 
-    public int getMonth() {
-        return month;
+    public List<Day> getCalender() {
+        return calender;
     }
 }
