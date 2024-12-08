@@ -1,6 +1,7 @@
 package oncall.model;
 
 import oncall.constant.Holidays;
+import oncall.dto.DayOneCallDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,8 @@ public class DayOneCalls {
         return name;
     }
 
-    public List<DayOncall> getMonthOneCall() {
-        return monthOneCall;
+    public List<DayOneCallDTO> getMonthOneCall() {
+        return monthOneCall.stream()
+                .map(DayOneCallDTO::new).toList();
     }
 }
