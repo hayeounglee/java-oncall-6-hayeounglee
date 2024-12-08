@@ -21,17 +21,16 @@ public class OncallController {
 
     public void run() {
         Calender calender = askMonthAndWeek();
-        DayOneCalls dayOneCalls = new DayOneCalls();
-        List<Oncall> oncalls = askOnCall();
+        List<Members> oncalls = askOnCall();
 
-        makeOneCalls(calender, dayOneCalls, oncalls);
-
+        DayOneCalls dayOneCalls = makeOneCalls(calender, oncalls);
         outputView.printDayShift(dayOneCalls);
     }
 
-    private void makeOneCalls(Calender calender, DayOneCalls dayOneCalls, List<Oncall> oncalls) {
-        Oncall weekdays = oncalls.get(0);
-        Oncall weekend = oncalls.get(1);
+    private DayOneCalls makeOneCalls(Calender calender, List<Members> oncalls) {
+        DayOneCalls dayOneCalls = new DayOneCalls();
+        Members weekdays = oncalls.get(0);
+        Members weekend = oncalls.get(1);
 
         for (Day day : calender.getCalender()) {
             if (Weeks.isWeekend(day) || Holidays.isHoliday(day)) {
@@ -40,16 +39,17 @@ public class OncallController {
             }
             dayOneCalls.calculate(day, weekdays);
         }
+        return dayOneCalls;
     }
 
     private Calender askMonthAndWeek() {
         return Task.repeatUntilValid(() -> new Calender(inputView.getMonthAndWeek()));
     }
 
-    private List<Oncall> askOnCall() {
+    private List<Members> askOnCall() {
         return Task.repeatUntilValid(() -> {
-            Oncall weekdays = new Weekdays(inputView.getWeekdaysOnCall());
-            Oncall weekend = new Weekend(inputView.getWeekendOnCall());
+            Members weekdays = new Members(inputView.getWeekdaysOnCall());
+            Members weekend = new Members(inputView.getWeekendOnCall());
             return new ArrayList<>(List.of(weekdays, weekend));
         });
     }

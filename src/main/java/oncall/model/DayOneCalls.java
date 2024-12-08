@@ -12,19 +12,19 @@ public class DayOneCalls {
         monthOneCall = new ArrayList<>();
     }
 
-    public void calculate(Day day, Oncall oncall) {
-        monthOneCall.add(new DayOncall(day.month(), day.day(), day.week(), Holidays.isHoliday(day), getOncall(monthOneCall, oncall)));
+    public void calculate(Day day, Members members) {
+        monthOneCall.add(new DayOncall(day.month(), day.day(), day.week(), Holidays.isHoliday(day), getOncall(members)));
     }
 
-    private String getOncall(List<DayOncall> monthOneCal, Oncall oncall) {
-        String name = oncall.getName();
+    private String getOncall(Members members) {
+        String name = members.getName();
 
-        if (monthOneCal.size() == 0) {
+        if (monthOneCall.size() == 0) {
             return name;
         }
 
-        if (monthOneCal.get(monthOneCal.size() - 1).name().equals(name)) {
-            return oncall.changeOrder(name);
+        if (monthOneCall.get(monthOneCall.size() - 1).name().equals(name)) {
+            return members.changeOrder(name);
         }
         return name;
     }
